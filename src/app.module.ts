@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { MediTestModule } from './medi-test/medi-test.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [MediTestModule, PrismaModule],
+  imports: [MediTestModule, PrismaModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
