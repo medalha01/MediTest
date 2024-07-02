@@ -1,4 +1,7 @@
-module.exports = {
+import airbnbConfig from 'eslint-config-airbnb-typescript';
+
+export default {
+  ...airbnbConfig,
   parser: '@typescript-eslint/parser',
   extends: [
     'airbnb-typescript',
@@ -17,7 +20,15 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  plugins: ['@typescript-eslint', 'import', 'jsx-a11y', 'react', 'react-hooks', 'unicorn', 'prettier'],
+  plugins: [
+    '@typescript-eslint',
+    'import',
+    'jsx-a11y',
+    'react',
+    'react-hooks',
+    'unicorn',
+    'prettier',
+  ],
   rules: {
     '@typescript-eslint/naming-convention': [
       'error',
@@ -41,4 +52,9 @@ module.exports = {
       version: 'detect',
     },
   },
+  overrides: [
+    {
+      files: ['src/**/*.{ts,tsx,js,jsx}', 'test/**/*.{ts,tsx,js,jsx}', '**/**/*.{ts,tsx,js,jsx}'],
+    },
+  ],
 };
