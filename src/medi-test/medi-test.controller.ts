@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { MediTestService } from './medi-test.service';
 import { DrugDto, StorageDto, DRDto } from './drugs.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('MediTest')
 @Controller('meditest')
