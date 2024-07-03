@@ -160,4 +160,19 @@ export class MediTestController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Post('report')
+  @ApiOperation({
+    summary: 'Get a report about the transactions within a date range',
+  })
+  @ApiResponse({ status: 200, description: 'Retrieved the report.' })
+  @ApiResponse({ status: 400, description: 'Invalid input.' })
+  async getReport(@Body() dateRangeDto: DRDto) {
+    try {
+      const result = await this.mediTestService.getReport(dateRangeDto);
+      return { data: result };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

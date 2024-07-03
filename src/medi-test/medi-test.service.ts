@@ -132,4 +132,28 @@ export class MediTestService {
       },
     });
   }
+
+  async getReport(dateRangeDto: DRDto) {
+    await validateOrReject(dateRangeDto);
+    this.logger.log(
+      `Fetching detailed storage transactions between ${dateRangeDto.startDate} and ${dateRangeDto.endDate}`,
+    );
+    return this.prismaService.storageLedger.findMany({
+      where: {
+        timestamp: {
+          gte: dateRangeDto.startDate,
+          lte: dateRangeDto.endDate,
+        },
+      },
+      include: {
+        drug: {
+          select: {
+            name: true,
+            description: true,
+            composition: true,
+          },
+        },
+      },
+    });
+  }
 }
