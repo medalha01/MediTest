@@ -45,7 +45,7 @@ describe('JwtStrategy', () => {
       const user = {
         id: 'test-id',
         email: 'user@example.com',
-        username: 'testuser',
+        username: 'marco',
         password: 'strongPassword',
       };
 

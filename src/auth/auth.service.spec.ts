@@ -46,7 +46,7 @@ describe('AuthService', () => {
         authService.register({
           email: 'user@example.com',
           password: 'strongpassword',
-          username: 'testuser',
+          username: 'marco',
         }),
       ).rejects.toThrow(HttpException);
     });
@@ -55,17 +55,17 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       mockPrismaService.user.create.mockResolvedValue({
         email: 'user@example.com',
-        username: 'testuser',
+        username: 'marco',
         password: 'strongPassword',
       });
       const result = await authService.register({
         email: 'user@example.com',
         password: 'strongpassword',
-        username: 'testuser',
+        username: 'marco',
       });
       expect(result).toEqual({
         email: 'user@example.com',
-        username: 'testuser',
+        username: 'marco',
       });
     });
   });

@@ -29,7 +29,7 @@ describe('AuthController', () => {
       const dto: RegisterDto = {
         email: 'user@example.com',
         password: 'strongpassword',
-        username: 'test',
+        username: 'marco',
       };
       const mockResponse = { id: 1, ...dto };
       mockAuthService.register.mockResolvedValue(mockResponse);
@@ -46,7 +46,7 @@ describe('AuthController', () => {
       const dto: RegisterDto = {
         email: 'user@example.com',
         password: 'strongpassword',
-        username: 'test',
+        username: 'marco',
       };
       const error = new Error('Registration failed');
       mockAuthService.register.mockRejectedValue(error);
