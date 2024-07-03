@@ -86,7 +86,7 @@ export class AuthController {
       };
     } catch (error) {
       this.logger.error(`Login failed: ${error.message}`, error.stack);
-      throw new HttpException('Login failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Login failed', HttpStatus.UNAUTHORIZED);
     }
   }
 
