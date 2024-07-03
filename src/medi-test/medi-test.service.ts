@@ -2,43 +2,57 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { DrugDto, StorageDto, StorageLedgerDto } from './drugs.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { validateOrReject } from 'class-validator';
 
 @Injectable()
 export class MediTestService {
+  private readonly logger = new Logger(MediTestService.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   async createDrug(drugDto: DrugDto) {
+    await validateOrReject(drugDto);
+    this.logger.log(`Creating drug with data: ${JSON.stringify(drugDto)}`);
     return this.prismaService.drug.create({
       data: { ...drugDto },
     });
   }
 
   async getDrugs() {
+    this.logger.log('Fetching all drugs');
     return this.prismaService.drug.findMany();
   }
 
   async getDrugById(id: string) {
+    this.logger.log(`Fetching drug with ID: ${id}`);
     const drug = await this.prismaService.drug.findUnique({ where: { id } });
     if (!drug) {
+      this.logger.warn(`Drug with ID ${id} not found`);
       throw new NotFoundException(`Drug with ID ${id} not found.`);
     }
     return drug;
   }
 
   async getDrugByName(name: string) {
+    this.logger.log(`Fetching drugs with name: ${name}`);
     return this.prismaService.drug.findMany({ where: { name } });
   }
 
   async getDrugByComposition(composition: string) {
+    this.logger.log(`Fetching drugs with composition: ${composition}`);
     return this.prismaService.drug.findMany({ where: { composition } });
   }
 
   async updateDrug(id: string, drugDto: DrugDto) {
+    await validateOrReject(drugDto);
+    this.logger.log(`Updating drug with ID: ${id}`);
     const drug = await this.prismaService.drug.findUnique({ where: { id } });
     if (!drug) {
+      this.logger.warn(`Drug with ID ${id} not found`);
       throw new NotFoundException(`Drug with ID ${id} not found.`);
     }
     return this.prismaService.drug.update({
@@ -48,22 +62,30 @@ export class MediTestService {
   }
 
   async deleteDrug(id: string) {
+    this.logger.log(`Deleting drug with ID: ${id}`);
     const drug = await this.prismaService.drug.findUnique({ where: { id } });
     if (!drug) {
+      this.logger.warn(`Drug with ID ${id} not found`);
       throw new NotFoundException(`Drug with ID ${id} not found.`);
     }
     return this.prismaService.drug.delete({ where: { id } });
   }
 
   async getStorage() {
+    this.logger.log('Fetching all storage entries');
     return this.prismaService.storage.findMany();
   }
 
   async getStorageByDrugId(drugId: string) {
+    this.logger.log(`Fetching storage for drug ID: ${drugId}`);
     return this.prismaService.storage.findFirst({ where: { drugId } });
   }
 
   async addToStorage(storageDto: StorageDto) {
+    await validateOrReject(storageDto);
+    this.logger.log(
+      `Adding to storage with data: ${JSON.stringify(storageDto)}`,
+    );
     const existingStorage = await this.prismaService.storage.findFirst({
       where: { drugId: storageDto.drugId },
     });
