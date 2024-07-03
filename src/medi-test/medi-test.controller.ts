@@ -8,10 +8,17 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { MediTestService } from './medi-test.service';
 import { DrugDto, StorageDto, DRDto } from './drugs.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('MediTest')
 @Controller('meditest')
@@ -19,6 +26,8 @@ export class MediTestController {
   constructor(private readonly mediTestService: MediTestService) {}
 
   @Post('drug')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new drug' })
   @ApiResponse({
     status: 201,
@@ -72,6 +81,8 @@ export class MediTestController {
   }
 
   @Put('drug/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a drug' })
   @ApiResponse({
     status: 200,
@@ -88,6 +99,8 @@ export class MediTestController {
   }
 
   @Delete('drug/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a drug' })
   @ApiResponse({
     status: 200,
@@ -120,6 +133,8 @@ export class MediTestController {
   }
 
   @Post('storage')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Add to storage' })
   @ApiResponse({ status: 201, description: 'Storage updated.' })
   @ApiResponse({ status: 400, description: 'Invalid input.' })

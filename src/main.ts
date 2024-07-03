@@ -9,6 +9,14 @@ async function bootstrap() {
     .setTitle('Meditest')
     .setDescription('CRUDE Example MediTest')
     .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT Auth',
+      description: 'Enter token',
+      in: 'header',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
