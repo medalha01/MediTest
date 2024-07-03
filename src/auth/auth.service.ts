@@ -100,6 +100,7 @@ export class AuthService {
     email: string;
     username: string;
     id: string;
+    password: string;
   }) {
     const { password, ...userWithoutPassword } = user;
     return userWithoutPassword;
