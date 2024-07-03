@@ -15,19 +15,29 @@ model User {
 }
 
 model Drug {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   description  String
   manufacturer String
   buyCost      Int
   composition  String
   Storage      Storage[]
+  Ledger       StorageLedger[]
 }
 
 model Storage {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
   drugId   String @db.ObjectId
   quantity Int
+
+  drug Drug @relation(fields: [drugId], references: [id])
+}
+
+model StorageLedger {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  drugId    String   @db.ObjectId
+  change    Int
+  timestamp DateTime @default(now())
 
   drug Drug @relation(fields: [drugId], references: [id])
 }

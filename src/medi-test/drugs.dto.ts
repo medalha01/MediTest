@@ -43,3 +43,13 @@ export class StorageDto {
   @IsInt()
   quantity: number;
 }
+
+export class DRDto {
+  @IsNotEmpty()
+  @IsDate()
+  startDate: Date;
+
+  @IsNotEmpty()
+  @IsDate()
+  endDate: Date;
+}

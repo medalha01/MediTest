@@ -4,7 +4,7 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { DrugDto, StorageDto, StorageLedgerDto } from './drugs.dto';
+import { DrugDto, StorageDto, StorageLedgerDto, DRDto } from './drugs.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { validateOrReject } from 'class-validator';
 
@@ -114,6 +114,21 @@ export class MediTestService {
         drugId: storageDto.drugId,
         change: storageDto.quantity,
         timestamp: new Date(),
+      },
+    });
+  }
+
+  async getStorageTransactions(dateRangeDto: DRDto) {
+    await validateOrReject(dateRangeDto);
+    this.logger.log(
+      `Fetching storage transactions between ${dateRangeDto.startDate} and ${dateRangeDto.endDate}`,
+    );
+    return this.prismaService.storageLedger.findMany({
+      where: {
+        timestamp: {
+          gte: dateRangeDto.startDate,
+          lte: dateRangeDto.endDate,
+        },
       },
     });
   }
