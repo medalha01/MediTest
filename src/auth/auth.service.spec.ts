@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AuthService } from './auth.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -45,7 +44,7 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue({ id: 1 });
       await expect(
         authService.register({
-          email: 'test@example.com',
+          email: 'user@example.com',
           password: 'password',
           username: 'testuser',
         }),
@@ -55,17 +54,17 @@ describe('AuthService', () => {
     it('should create a new user', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       mockPrismaService.user.create.mockResolvedValue({
-        email: 'test@example.com',
+        email: 'user@example.com',
         username: 'testuser',
         password: 'hashedPassword',
       });
       const result = await authService.register({
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: 'password',
         username: 'testuser',
       });
       expect(result).toEqual({
-        email: 'test@example.com',
+        email: 'user@example.com',
         username: 'testuser',
       });
     });
@@ -75,7 +74,7 @@ describe('AuthService', () => {
     it('should return null if user does not exist', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       const result = await authService.validateUser({
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: 'password',
       });
       expect(result).toBeNull();
@@ -83,15 +82,19 @@ describe('AuthService', () => {
 
     it('should return user data if password matches', async () => {
       const user = {
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: await bcrypt.hash('password', 10),
       };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       const result = await authService.validateUser({
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: 'password',
       });
-      expect(result).toEqual({ email: 'test@example.com' });
+      expect(result).toEqual({
+        email: 'user@example.com',
+        username: undefined,
+        id: undefined,
+      });
     });
   });
 
@@ -99,20 +102,20 @@ describe('AuthService', () => {
     it('should throw an exception if user does not exist', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       await expect(
-        authService.login({ email: 'test@example.com', password: 'password' }),
+        authService.login({ email: 'user@example.com', password: 'password' }),
       ).rejects.toThrow(HttpException);
     });
 
     it('should return an access token if user exists', async () => {
       const user = {
         id: 1,
-        email: 'test@example.com',
-        password: 'hashedPassword',
+        email: 'user@example.com',
+        password: await bcrypt.hash('password', 10),
       };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       mockJwtService.sign.mockReturnValue('token');
       const result = await authService.login({
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: 'password',
       });
       expect(result).toEqual({ access_token: 'token' });

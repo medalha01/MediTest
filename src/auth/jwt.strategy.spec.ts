@@ -41,10 +41,10 @@ describe('JwtStrategy', () => {
 
   describe('validate', () => {
     it('should return user data when user is found', async () => {
-      const payload = { sub: 'test-id', email: 'test@example.com' };
+      const payload = { sub: 'test-id', email: 'user@example.com' };
       const user = {
         id: 'test-id',
-        email: 'test@example.com',
+        email: 'user@example.com',
         username: 'testuser',
         password: 'hashedPassword',
       };
@@ -56,7 +56,7 @@ describe('JwtStrategy', () => {
     });
 
     it('should return null when user is not found', async () => {
-      const payload = { sub: 'test-id', email: 'test@example.com' };
+      const payload = { sub: 'test-id', email: 'user@example.com' };
 
       jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(null);
 

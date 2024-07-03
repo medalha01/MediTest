@@ -27,7 +27,7 @@ describe('AuthController', () => {
   describe('register', () => {
     it('should successfully register a user', async () => {
       const dto = {
-        email: 'test@example.com',
+        email: 'user@example.com',
         password: 'password',
         username: 'test',
       };
@@ -46,7 +46,7 @@ describe('AuthController', () => {
   // Testing the 'login' method
   describe('login', () => {
     it('should successfully log in a user', async () => {
-      const dto = { email: 'test@example.com', password: 'password' };
+      const dto = { email: 'user@example.com', password: 'password' };
       mockAuthService.login.mockResolvedValue({ accessToken: 'token' });
 
       await expect(controller.login(dto)).resolves.toEqual({
