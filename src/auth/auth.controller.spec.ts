@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { RegisterDto, LoginDto } from './auth.dto';
+import { LocalAuthGuard } from './local-auth.guard';
 
 // Mocking AuthService for isolation in unit tests
 const mockAuthService = {
@@ -13,7 +15,6 @@ const mockAuthService = {
 describe('AuthController', () => {
   let controller: AuthController;
 
-  // Setting up the test module before each test
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -23,52 +24,72 @@ describe('AuthController', () => {
     controller = module.get<AuthController>(AuthController);
   });
 
-  // Testing the 'register' method
   describe('register', () => {
     it('should successfully register a user', async () => {
-      const dto = {
+      const dto: RegisterDto = {
         email: 'user@example.com',
         password: 'password',
         username: 'test',
       };
-      mockAuthService.register.mockResolvedValue({ id: 1, ...dto });
+      const mockResponse = { id: 1, ...dto };
+      mockAuthService.register.mockResolvedValue(mockResponse);
 
       await expect(controller.register(dto)).resolves.toEqual({
-        id: 1,
-        ...dto,
+        statusCode: HttpStatus.CREATED,
+        message: 'User successfully registered',
+        data: mockResponse,
       });
       expect(mockAuthService.register).toHaveBeenCalledWith(dto);
     });
 
-    // Add more tests for failure scenarios or edge cases
+    it('should handle registration failure', async () => {
+      const dto: RegisterDto = {
+        email: 'user@example.com',
+        password: 'password',
+        username: 'test',
+      };
+      const error = new Error('Registration failed');
+      mockAuthService.register.mockRejectedValue(error);
+
+      await expect(controller.register(dto)).rejects.toThrow(HttpException);
+      await expect(controller.register(dto)).rejects.toHaveProperty(
+        'message',
+        'Registration failed',
+      );
+    });
   });
 
-  // Testing the 'login' method
   describe('login', () => {
     it('should successfully log in a user', async () => {
-      const dto = { email: 'user@example.com', password: 'password' };
-      mockAuthService.login.mockResolvedValue({ accessToken: 'token' });
+      const dto: LoginDto = { email: 'user@example.com', password: 'password' };
+      const mockResponse = { access_token: 'token' };
+      mockAuthService.login.mockResolvedValue(mockResponse);
 
       await expect(controller.login(dto)).resolves.toEqual({
-        accessToken: 'token',
+        statusCode: HttpStatus.OK,
+        message: 'User successfully logged in',
+        data: { token: 'token' },
       });
       expect(mockAuthService.login).toHaveBeenCalledWith(dto);
     });
 
     it('should fail to log in a user', async () => {
-      const dto = { email: 'user@example.com', password: 'wrongpassword' };
+      const dto: LoginDto = {
+        email: 'user@example.com',
+        password: 'wrongpassword',
+      };
       const errorResponse = {
-        message: 'Unauthorized',
+        message: 'Login failed',
         status: HttpStatus.UNAUTHORIZED,
       };
       mockAuthService.login.mockRejectedValue(
-        new HttpException(errorResponse, HttpStatus.UNAUTHORIZED),
+        new HttpException(errorResponse.message, errorResponse.status),
       );
 
       await expect(controller.login(dto)).rejects.toThrow(HttpException);
       await expect(controller.login(dto)).rejects.toHaveProperty(
-        'message',
-        'Unauthorized',
+        'response.message',
+        'Login failed',
       );
       await expect(controller.login(dto)).rejects.toHaveProperty(
         'status',
@@ -77,7 +98,6 @@ describe('AuthController', () => {
     });
   });
 
-  // Testing the 'test' method
   describe('test', () => {
     it('should throw a Forbidden exception', async () => {
       await expect(controller.test()).rejects.toThrow(HttpException);
@@ -88,6 +108,4 @@ describe('AuthController', () => {
       );
     });
   });
-
-  // Additional tests can be added here for other methods or scenarios
 });
