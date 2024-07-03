@@ -28,7 +28,7 @@ describe('AuthController', () => {
     it('should successfully register a user', async () => {
       const dto: RegisterDto = {
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
         username: 'test',
       };
       const mockResponse = { id: 1, ...dto };
@@ -45,7 +45,7 @@ describe('AuthController', () => {
     it('should handle registration failure', async () => {
       const dto: RegisterDto = {
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
         username: 'test',
       };
       const error = new Error('Registration failed');
@@ -61,7 +61,10 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should successfully log in a user', async () => {
-      const dto: LoginDto = { email: 'user@example.com', password: 'password' };
+      const dto: LoginDto = {
+        email: 'user@example.com',
+        password: 'strongpassword',
+      };
       const mockResponse = { access_token: 'token' };
       mockAuthService.login.mockResolvedValue(mockResponse);
 
@@ -88,7 +91,7 @@ describe('AuthController', () => {
 
       await expect(controller.login(dto)).rejects.toThrow(HttpException);
       await expect(controller.login(dto)).rejects.toHaveProperty(
-        'response.message',
+        'response',
         'Login failed',
       );
       await expect(controller.login(dto)).rejects.toHaveProperty(

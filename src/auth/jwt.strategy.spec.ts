@@ -46,7 +46,7 @@ describe('JwtStrategy', () => {
         id: 'test-id',
         email: 'user@example.com',
         username: 'testuser',
-        password: 'hashedPassword',
+        password: 'strongPassword',
       };
 
       jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(user);

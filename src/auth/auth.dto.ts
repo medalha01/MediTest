@@ -15,7 +15,7 @@ export class RegisterDto {
 
   @ApiProperty({
     description: 'Username of the user',
-    example: 'john_doe',
+    example: 'marco',
   })
   username: string;
 }
@@ -43,7 +43,7 @@ export class UserDto {
 
   @ApiProperty({
     description: 'Username of the user',
-    example: 'john_doe',
+    example: 'marco',
   })
   username: string;
 

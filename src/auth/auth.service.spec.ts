@@ -45,7 +45,7 @@ describe('AuthService', () => {
       await expect(
         authService.register({
           email: 'user@example.com',
-          password: 'password',
+          password: 'strongpassword',
           username: 'testuser',
         }),
       ).rejects.toThrow(HttpException);
@@ -56,11 +56,11 @@ describe('AuthService', () => {
       mockPrismaService.user.create.mockResolvedValue({
         email: 'user@example.com',
         username: 'testuser',
-        password: 'hashedPassword',
+        password: 'strongPassword',
       });
       const result = await authService.register({
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
         username: 'testuser',
       });
       expect(result).toEqual({
@@ -75,7 +75,7 @@ describe('AuthService', () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       const result = await authService.validateUser({
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
       });
       expect(result).toBeNull();
     });
@@ -83,12 +83,12 @@ describe('AuthService', () => {
     it('should return user data if password matches', async () => {
       const user = {
         email: 'user@example.com',
-        password: await bcrypt.hash('password', 10),
+        password: await bcrypt.hash('strongpassword', 10),
       };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       const result = await authService.validateUser({
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
       });
       expect(result).toEqual({
         email: 'user@example.com',
@@ -102,7 +102,10 @@ describe('AuthService', () => {
     it('should throw an exception if user does not exist', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
       await expect(
-        authService.login({ email: 'user@example.com', password: 'password' }),
+        authService.login({
+          email: 'user@example.com',
+          password: 'strongpassword',
+        }),
       ).rejects.toThrow(HttpException);
     });
 
@@ -110,13 +113,13 @@ describe('AuthService', () => {
       const user = {
         id: 1,
         email: 'user@example.com',
-        password: await bcrypt.hash('password', 10),
+        password: await bcrypt.hash('strongpassword', 10),
       };
       mockPrismaService.user.findUnique.mockResolvedValue(user);
       mockJwtService.sign.mockReturnValue('token');
       const result = await authService.login({
         email: 'user@example.com',
-        password: 'password',
+        password: 'strongpassword',
       });
       expect(result).toEqual({ access_token: 'token' });
     });
